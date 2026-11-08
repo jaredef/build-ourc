@@ -1,0 +1,14 @@
+# input (fixtures/kat/)	expected output (hex; "-" = empty)	constraint	what a failing M0 is doing
+hex-token.m0	deadbeef	Z1	not emitting an even-length hex token as its bytes
+hex-tokens-whitespace.m0	deadbeef	Z1	treating spaces, tabs or newlines as anything but token separators
+comments.m0	4a4b	Z1	not ending a comment at end of line, or emitting comment text
+comment-lone-cr.m0	4a4c	Z1	ending a comment at a lone CR (only LF ends it)
+comment-crlf.m0	4a4c	Z1	mishandling a CRLF line ending
+labels-emit-nothing.m0	4a4b	Z2	emitting bytes for a multi-character label
+macro-use.m0	4a4b4a4b	Z5 Z6	not expanding a macro to its body bytes at each use
+offset-forward.m0	0500000000	Z3 Z7	not resolving a forward &NAME, or not counting its 4 bytes on the first pass
+offset-backward.m0	0000000000	Z3	not emitting the output offset of a multi-character label
+x86-rel32-forward.m0	0100000000	Z3 Z7	not computing rel32 = target - (here + 4) for a multi-character name
+x86-rel32-backward.m0	00fbffffff	Z3	getting a backward rel32 wrong (want 0 - (1 + 4) = -5)
+x86-address-forward.m0	04004000	Z3 Z7	not emitting BASE 0x400000 + offset (label at 4)
+macro-body-one-token.m0	4b4a	Z5 Z6	taking more than ONE token as the macro body (4a is the body; 4b is ordinary hex after it)

@@ -1,0 +1,8 @@
+# input (fixtures/err/)	expected exit status ("nz" = any non-zero)	constraint	what a failing M0 is doing
+unknown-token.m0	3	Z8	silently decoding or ignoring a token that is neither a macro nor even-length hex
+unknown-word.m0	3	Z8	silently decoding or ignoring an undefined name
+odd-hex-token.m0	3	Z8	accepting an odd-length hex token
+bad-macro-body.m0	nz	Z5 Z8	accepting a macro body that is not a hex token
+macro-used-before-defined.m0	nz	Z6 Z8	accepting a macro used before its definition
+hash-inside-token.m0	3	Z1 Z8	starting a comment at a # inside a token (4a#c is one unknown token)
+undefined-label.m0	3	Z7 Z8	resolving a reference to a label that is never defined (to 0, or to garbage) instead of stopping

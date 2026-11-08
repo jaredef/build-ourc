@@ -1,0 +1,22 @@
+# input (relative to fixtures/kat/)	expected output (hex; "-" = empty)	constraint	what a failing hex2 is doing
+../../../01-hex1/fixtures/kat/hex0-lowercase-pair.hex1	4a	Y1 (X1)	not decoding hex like hex0
+../../../01-hex1/fixtures/kat/hex0-uppercase-ignored.hex1	-	Y1 (X1)	treating A-F as digits
+../../../01-hex1/fixtures/kat/hex0-odd-trailing-nibble.hex1	-	Y1 (X1)	emitting a half byte
+../../../01-hex1/fixtures/kat/hex0-comment-keeps-nibble.hex1	4a	Y1 (X1)	resetting the nibble at a comment
+../../../01-hex1/fixtures/kat/hex0-empty.hex1	-	Y1 (X1)	failing on empty input
+../../../01-hex1/fixtures/kat/hex0-comment-at-eof.hex1	-	Y1 (X1)	running off the end inside a comment
+../../../01-hex1/fixtures/kat/hex0-all-256-bytes.hex1	000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff	Y1 (X1)	mis-decoding a digit
+../../../01-hex1/fixtures/kat/label-emits-nothing.hex1	4a	Y1 (X2)	emitting bytes for a label definition
+../../../01-hex1/fixtures/kat/label-name-not-a-digit.hex1	4a	Y1 (X2)	decoding the name character after : as a hex digit
+../../../01-hex1/fixtures/kat/refs-in-comment.hex1	4a	Y1 (X1 X2)	acting on : or a reference inside a comment
+../../../01-hex1/fixtures/kat/x86-forward-ref.hex1	0100000000	Y1 (X3 X4)	counting rel32 from the start of the field, or not resolving forward labels (want target 5 - (here 0 + 4) = 1)
+../../../01-hex1/fixtures/kat/x86-backward-ref.hex1	00fbffffff	Y1 (X3)	getting the sign or base of a backward rel32 wrong (want 0 - (1 + 4) = -5)
+../../../01-hex1/fixtures/kat/x86-two-refs.hex1	050000000000000000	Y1 (X3 X4)	mixing up labels, or not counting each reference as 4 output bytes on the first pass
+../../../01-hex1/fixtures/kat/x86-forward-across-comment.hex1	0100000000	Y1 (X3 X4)	letting comments or spaces change output offsets
+transparent-chars.hex2	4a	Y1	letting a non-token character emit or change state
+layout-refs-in-comment.hex2	4a	Y1	acting on = or & inside a comment
+offset-forward.hex2	0500000000	Y2 Y4	not resolving a forward &, or not counting its 4 bytes on the first pass (label at 5)
+offset-backward.hex2	0000000000	Y2	emitting something other than the output offset (label at 0)
+address-forward.hex2	04004000	Y3 Y4	not emitting BASE 0x400000 + offset (label at 4)
+address-backward.hex2	0000004000	Y3	not emitting BASE 0x400000 + offset (label at 0)
+both-forward.hex2	0800000008004000	Y2 Y3 Y4	giving = or & the wrong width on the first pass (label at 8)

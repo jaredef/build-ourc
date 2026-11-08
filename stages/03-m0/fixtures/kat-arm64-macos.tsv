@@ -1,0 +1,19 @@
+# input (fixtures/kat/)	expected output (hex; "-" = empty)	constraint	what a failing M0 is doing
+hex-token.m0	deadbeef	Z1	not emitting an even-length hex token as its bytes
+hex-tokens-whitespace.m0	deadbeef	Z1	treating spaces, tabs or newlines as anything but token separators
+comments.m0	4a4b	Z1	not ending a comment at end of line, or emitting comment text
+comment-lone-cr.m0	4a4c	Z1	ending a comment at a lone CR (only LF ends it)
+comment-crlf.m0	4a4c	Z1	mishandling a CRLF line ending
+labels-emit-nothing.m0	4a4b	Z2	emitting bytes for a multi-character label
+macro-use.m0	4a4b4a4b	Z5 Z6	not expanding a macro to its body bytes at each use
+offset-forward.m0	0500000000	Z3 Z7	not resolving a forward &NAME, or not counting its 4 bytes on the first pass
+offset-backward.m0	0000000000	Z3	not emitting the output offset of a multi-character label
+macro-arm64-exit.m0	400580d2300080d2011000d4	Z5 Z6	macro output differing from the same bytes written raw (raw-arm64-exit.m0)
+raw-arm64-exit.m0	400580d2300080d2011000d4	Z1	mis-decoding a long hex token
+arm64-b-forward.m0	0200001400000000	Z3 Z7	not resolving @NAME to b with imm26 = (8 - 0) / 4
+arm64-bl-backward.m0	00000000ffffff97	Z3	not resolving a backward !NAME (imm26 = -1)
+arm64-bcond-forward.m0	600000540000000000000000	Z4 Z7	not patching imm19 into bits 5-23 of the word (want (12 - 0) / 4 = 3: 0x54000060)
+arm64-bcond-backward.m0	00000000e0ffff54	Z4	not masking a negative imm19 to 19 bits (want (0 - 4) / 4 = -1: 0x54ffffe0)
+arm64-cbz-forward.m0	20000034	Z4 Z7	not patching imm19 into a cbz word (want 1: 0x34000020)
+arm64-layout.m0	00aa0100000006000000b102000001000000	Z3	getting & (4-byte output offset) or = (8-byte 0x1000002b0 + offset) wrong for multi-character names
+macro-body-one-token.m0	4b4a	Z5 Z6	taking more than ONE token as the macro body (4a is the body; 4b is ordinary hex after it)

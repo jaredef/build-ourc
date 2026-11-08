@@ -1,0 +1,16 @@
+# input (fixtures/kat/)	expected output (hex; "-" = empty)	constraint	what a failing hex1 is doing
+hex0-lowercase-pair.hex1	4a	X1	not decoding hex like hex0
+hex0-uppercase-ignored.hex1	-	X1	treating A-F as digits
+hex0-odd-trailing-nibble.hex1	-	X1	emitting a half byte
+hex0-comment-keeps-nibble.hex1	4a	X1	resetting the nibble at a comment
+hex0-transparent-chars.hex1	4a	X1	letting a non-token character emit or change state
+hex0-empty.hex1	-	X1	failing on empty input
+hex0-comment-at-eof.hex1	-	X1	running off the end inside a comment
+hex0-all-256-bytes.hex1	000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff	X1	mis-decoding a digit
+label-emits-nothing.hex1	4a	X2	emitting bytes for a label definition
+label-name-not-a-digit.hex1	4a	X2	decoding the name character after : as a hex digit
+refs-in-comment.hex1	4a	X1 X2	acting on : or a reference inside a comment
+x86-forward-ref.hex1	0100000000	X3 X4	counting rel32 from the start of the field, or not resolving forward labels (want target 5 - (here 0 + 4) = 1)
+x86-backward-ref.hex1	00fbffffff	X3	getting the sign or base of a backward rel32 wrong (want 0 - (1 + 4) = -5)
+x86-two-refs.hex1	050000000000000000	X3 X4	mixing up labels, or not counting each reference as 4 output bytes on the first pass
+x86-forward-across-comment.hex1	0100000000	X3 X4	letting comments or spaces change output offsets
